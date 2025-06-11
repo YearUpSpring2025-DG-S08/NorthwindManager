@@ -84,9 +84,9 @@ public class Console {
         }
     }
 
-    public int promptForOption(String[] options, String promptMessage) {
+    public int promptForOption(String[] options) {
         while (true) {
-            System.out.println(promptMessage);
+            System.out.println("Please select from one of the following options:");
             for (int i = 0; i < options.length; i++) {
                 System.out.println((i + 1) + ") " + options[i]);
             }
@@ -94,7 +94,7 @@ public class Console {
             try {
                 int choice = promptForInt("Select option (1–" + options.length + "): ");
                 if (choice >= 1 && choice <= options.length) {
-                    return choice - 1; // Return index for easier use
+                    return choice;
                 } else {
                     System.out.println("Invalid choice. Please enter a number between 1 and " + options.length + ".");
                 }
