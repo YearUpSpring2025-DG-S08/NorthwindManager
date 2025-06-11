@@ -61,6 +61,24 @@ public class Console {
         return result;
     }
 
+    public double promptForDouble(String prompt) {
+        boolean hasResult = false;
+        double result = 0;
+        while (!hasResult) {
+            try {
+                System.out.print(prompt);
+                result = scanner.nextDouble();
+                scanner.nextLine();
+                hasResult = true;
+
+            } catch (Exception e) {
+                System.out.println("Invalid entry");
+                scanner.next();
+            }
+        }
+        return result;
+    }
+
     public String promptForString(String prompt){
         return this.promptForString(prompt, false);
     }

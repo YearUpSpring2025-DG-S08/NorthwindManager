@@ -1,6 +1,8 @@
 package com.pluralsight.ui;
 
-import com.pluralsight.data.NorthwindDataManager;
+import com.pluralsight.data.CategoryDAO;
+import com.pluralsight.data.ProductDAO;
+import com.pluralsight.data.SuppliersDAO;
 import com.pluralsight.models.Category;
 import com.pluralsight.models.Employee;
 import com.pluralsight.models.Product;
@@ -11,13 +13,17 @@ public class UserInterface {
 
     private Employee currentEmployee;
     private final Console console;
-    private final NorthwindDataManager dataManager;
+    private final CategoryDAO categoryDAO;
+    private final ProductDAO productDAO;
+    private final SuppliersDAO suppliersDAO;
+    
 
-    public UserInterface(NorthwindDataManager dataManager){
+    public UserInterface(CategoryDAO categoryDAO, ProductDAO productDAO, SuppliersDAO suppliersDAO) {
         this.console = new Console();
-        this.dataManager = dataManager;
+        this.categoryDAO = categoryDAO;
+        this.productDAO = productDAO;
+        this.suppliersDAO = suppliersDAO;
     }
-
 
     public  void display(){
         System.out.println("Welcome to the Northwind Manager!");
@@ -78,7 +84,7 @@ public class UserInterface {
     }
 
     private void listAllCategories() {
-        List<Category> categories = dataManager.getCategories();
+        List<Category> categories = categoryDAO.getCategories();
         if(categories.stream().count() <= 0){
             System.out.println("There are no categories found");
         } else{
@@ -87,20 +93,29 @@ public class UserInterface {
     }
 
     private void listAllProducts() {
-        List<Product> products = dataManager.getProducts();
-        if(products.stream().count() <= 0){
-            System.out.println("There are no products found");
-        } else{
-            products.forEach(System.out::println);
-        }
+        List<Product> products = productDAO.getProducts();
+        displayProducts(products);
         
     }
 
     private void listProductsByCategory() {
-        
+        String categoryName = console.promptForString("Enter a category name: ");
+        Category category = categoryDAO.getCategoryByName(categoryName);
+        if(category != null){
+//            System.out.println("You selected category ID: " + category.getId());
+            List<Product> productsByCategory = productDAO.getProductsByCategory(category);
+            displayProducts(productsByCategory);
+        } else {
+            System.out.println("There is no record of this category");
+        }
     }
 
     private void listProductsByPrice() {
+        double minPrice = console.promptForDouble("Enter a minimum price: ");
+        double maxPrice = console.promptForDouble("Enter a maximum price: ");
+        
+        List<Product> productsByPrice = productDAO.getProductsByPrice(minPrice, maxPrice);
+        displayProducts(productsByPrice);
     }
 
     private void listAllSuppliers() {
@@ -111,5 +126,11 @@ public class UserInterface {
         
     }
     
-    
+    private void displayProducts(List<Product> products){
+        if(products.stream().count() <= 0){
+            System.out.println("There are no products found");
+        } else{
+            products.forEach(System.out::println);
+        }
+    }
 }
